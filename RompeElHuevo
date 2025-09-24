@@ -1,0 +1,181 @@
+package com.example.huevos  // Nombre del paquete de tu aplicación
+
+// Importaciones necesarias
+import android.os.Bundle
+import androidx.activity.ComponentActivity          // Actividad base para apps con Compose
+import androidx.activity.compose.setContent        // Permite definir la UI en Compose
+import androidx.activity.enableEdgeToEdge          // Hace que la app use toda la pantalla
+import androidx.compose.runtime.saveable.rememberSaveable // Guardar estado tras rotación
+import androidx.compose.animation.core.spring      // Animación con efecto de resorte
+import androidx.compose.animation.core.animateFloatAsState // Animación para escala suave
+import androidx.compose.foundation.clickable       // Detecta clics en un elemento
+import androidx.compose.foundation.layout.*        // Layouts (Column, Row, Spacer, etc.)
+import androidx.compose.material3.LinearProgressIndicator // Barra de progreso
+import androidx.compose.material3.Scaffold         // Plantilla básica de pantalla
+import androidx.compose.material3.Text             // Componente de texto
+import androidx.compose.material3.Button           // Botón Material Design
+import androidx.compose.material3.MaterialTheme    // Tema Material3 (colores, etc.)
+import androidx.compose.runtime.*                  // Estados y efectos
+import androidx.compose.ui.Alignment              // Alineaciones en layouts
+import androidx.compose.ui.Modifier               // Modificadores (tamaño, padding, etc.)
+import androidx.compose.ui.draw.scale             // Escalar (para el rebote)
+import androidx.compose.ui.tooling.preview.Preview // Vista previa en Android Studio
+import androidx.compose.ui.unit.dp                // Unidad de medida en dp
+import androidx.compose.ui.unit.sp                // Unidad de medida para texto en sp
+import com.example.huevos.ui.theme.HuevosTheme    // Tema personalizado de la app
+import kotlinx.coroutines.delay                   // Función para retrasos (animación rebote)
+
+// Actividad principal de la aplicación
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        enableEdgeToEdge() // Hace que la UI aproveche toda la pantalla
+
+        // Establece el contenido de la pantalla usando Compose
+        setContent {
+            HuevosTheme { // Aplica el tema de colores de la app
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Greeting( // Llama a la función composable Greeting (la UI principal)
+                        name = "",
+                        modifier = Modifier.padding(innerPadding) // Respeta el padding del Scaffold
+                    )
+                }
+            }
+        }
+    }
+}
+
+// Función composable que dibuja la pantalla principal
+@Composable
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    // Estado que se conserva aunque gires la pantalla
+    var taps by rememberSaveable { mutableStateOf(0) }      // Número de clics
+    var emoji by rememberSaveable { mutableStateOf("🥚") }  // Emoji actual
+    var message by rememberSaveable { mutableStateOf("Toca...") } // Mensaje en pantalla
+
+    // Objetivo de clics para que nazca el pollito
+    val hatchGoal = 20
+
+    // Progreso calculado entre 0 y 1
+    val progress = (taps.coerceAtMost(hatchGoal).toFloat() / hatchGoal)
+
+    // Progreso en porcentaje (0% - 100%)
+    val progressPercent = (progress * 100).toInt()
+
+    // Estado temporal para el rebote del huevo
+    var isTapped by remember { mutableStateOf(false) }
+
+    // Animación de escala (rebote)
+    val scale by animateFloatAsState(
+        targetValue = if (isTapped) 1.2f else 1f, // Si clicas, se agranda un poco
+        animationSpec = spring(dampingRatio = 0.5f, stiffness = 300f) // Configuración del resorte
+    )
+
+    // Layout principal en columna
+    Column(
+        modifier = Modifier.fillMaxSize(), // Ocupa toda la pantalla
+        horizontalAlignment = Alignment.CenterHorizontally, // Centrado horizontal
+        verticalArrangement = Arrangement.Center,           // Centrado vertical
+    ) {
+        // El huevo (emoji) clickeable
+        Text(
+            text = emoji,         // Muestra el emoji actual
+            fontSize = 120.sp,    // Tamaño muy grande
+            modifier = Modifier
+                .scale(scale)     // Se escala con la animación de rebote
+                .clickable(enabled = taps < hatchGoal) { // Solo clickeable si aún no nació
+                    taps++        // Suma un toque
+                    isTapped = true // Activa el rebote
+
+                    // Cambia el estado según los taps
+                    when {
+                        taps >= hatchGoal -> { // Si llegaste al máximo
+                            emoji = "🐣"
+                            message = "!Ha nacido!"
+                        }
+                        taps >= 10 -> { // Si llevas más de 10 clics
+                            emoji = "🥚🧨"
+                            message = "¡Se agrieta!"
+                        }
+                        else -> { // Estado inicial
+                            emoji = "🥚"
+                            message = "Toca..."
+                        }
+                    }
+                }
+        )
+
+        // Efecto que desactiva el rebote después de un pequeño delay
+        LaunchedEffect(taps) {
+            if (isTapped) {
+                delay(100)     // Espera 0.1 segundos
+                isTapped = false // Vuelve el huevo a su tamaño normal
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp)) // Espacio entre elementos
+
+        // Mensaje debajo del huevo
+        Text(text = message, fontSize = 24.sp)
+
+        // Contador de taps
+        Text(text = "Taps: $taps", fontSize = 24.sp)
+
+        // Barra de progreso
+        LinearProgressIndicator(
+            progress = progress,                     // Valor del progreso
+            color = MaterialTheme.colorScheme.primary, // Color principal del tema
+            modifier = Modifier
+                .fillMaxWidth() // Ocupa todo el ancho
+                .height(12.dp)  // Grosor de la barra
+        )
+
+        Spacer(modifier = Modifier.height(8.dp)) // Separación
+
+        // Texto con el porcentaje de progreso
+        Text(text = "$progressPercent%", fontSize = 20.sp)
+
+        Spacer(modifier = Modifier.height(24.dp)) // Separación extra
+
+        // Fila de botones
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp) // Espacio entre botones
+        ) {
+            // Botón Reset
+            Button(onClick = {
+                taps = 0           // Reinicia los clics
+                emoji = "🥚"       // Vuelve al huevo normal
+                message = "Toca..." // Mensaje inicial
+            }) {
+                Text("Reset") // Texto dentro del botón
+            }
+
+            // Botón +5 (Boost)
+            Button(onClick = {
+                // Sumar 5 taps sin pasarse del máximo
+                taps = (taps + 5).coerceAtMost(hatchGoal)
+
+                // Actualizar estado según los taps
+                if (taps >= hatchGoal) {
+                    emoji = "🐣"
+                    message = "!Ha nacido!"
+                } else if (taps >= 10) {
+                    emoji = "🥚🧨"
+                    message = "¡Se agrieta!"
+                }
+            }) {
+                Text("+5") // Texto dentro del botón
+            }
+        }
+    }
+}
+
+// Vista previa en Android Studio
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    HuevosTheme {
+        Greeting("Android") // Llama a Greeting con un texto de prueba
+    }
+}
