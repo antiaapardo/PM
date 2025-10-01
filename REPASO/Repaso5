@@ -57,7 +57,9 @@ fun PantallaDosBotones() {
                     .width(150.dp)
                     .height(60.dp)
             ) {
-                Text(text = "+")
+                Text(text = "+",
+                fontSize = 40.sp
+                )
             }
 
             // Botón de restar
@@ -67,7 +69,15 @@ fun PantallaDosBotones() {
                     .width(150.dp)
                     .height(60.dp)
             ) {
-                Text(text = "-")
+                Text(text = "-", fontSize = 40.sp)
+            }
+            Button(
+                onClick = { taps=0 },
+                modifier = Modifier
+                    .width(150.dp)
+                    .height(60.dp)
+            ) {
+                Text(text = "Reset", fontSize = 20.sp)
             }
         }
     }
