@@ -1,0 +1,118 @@
+package com.example.repaso
+
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.repaso.ui.theme.REPASOTheme
+
+class Repaso6: ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            REPASOTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Column(
+                        modifier = Modifier.fillMaxSize(), // Ocupa toda la pantalla
+                        horizontalAlignment = Alignment.CenterHorizontally, // Centrado horizontal
+                        verticalArrangement = Arrangement.Center,           // Centrado vertical
+                    ) {
+                        GreetingEmoji(
+                            name = "",
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+@Composable
+fun GreetingEmoji(name: String, modifier: Modifier = Modifier) {
+    var taps by rememberSaveable { mutableStateOf(0) }
+    var posicion by rememberSaveable { mutableStateOf(0) } // 0=centro, 1=arriba, 2=derecha, 3=abajo, 4=izquierda
+
+    Box(
+        modifier = modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        if (taps > 10) {
+            Text(
+                text = "¡Ganaste!",
+                fontSize = 40.sp
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable {
+                        taps++
+                        posicion = (posicion + 1) % 4 // Cambia entre 4 posiciones
+                    }
+            ) {
+                // Mostramos el emoji según la posición
+                when (posicion) {
+                    0 -> Text(
+                        text = "⭐",
+                        fontSize = 80.sp,
+                        modifier = Modifier.align(Alignment.TopCenter).padding(top = 40.dp)
+                    )
+                    1 -> Text(
+                        text = "⭐",
+                        fontSize = 80.sp,
+                        modifier = Modifier.align(Alignment.CenterEnd).padding(end = 40.dp)
+                    )
+                    2 -> Text(
+                        text = "⭐",
+                        fontSize = 80.sp,
+                        modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 40.dp)
+                    )
+                    3 -> Text(
+                        text = "⭐",
+                        fontSize = 80.sp,
+                        modifier = Modifier.align(Alignment.CenterStart).padding(start = 40.dp)
+                    )
+                }
+
+                // Contador en la esquina superior izquierda
+                Text(
+                    text = "Taps: $taps",
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(16.dp)
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingEmojiPreview() {
+    REPASOTheme {
+        GreetingEmoji(name = "")
+    }
+}
