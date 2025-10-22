@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FormularioInteractivo</string>
+
+    <string-array name="opciones_spinner">
+        <item>España</item>
+        <item>Francia</item>
+        <item>Reino Unido</item>
+        <item>Alemania</item>
+    </string-array>
+
+</resources>
