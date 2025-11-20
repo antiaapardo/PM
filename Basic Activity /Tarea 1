@@ -1,0 +1,36 @@
+activity_main.xml
+Es el diseño principal de la pantalla. Contiene la barra de arriba, el botón flotante y el espacio donde se muestran los fragmentos.
+
+content_main.xml
+Es la parte central del diseño. Aquí está el bloque que cambia de fragmento cuando navegas.
+
+fragment_first.xml
+Es el diseño del primer fragmento. Define cómo se ve su pantalla (texto, botones, etc).
+
+fragment_second.xml
+Es el diseño del segundo fragmento. Igual que el primero, pero para la segunda pantalla.
+
+nav_graph.xml
+Es el mapa que le dice a la app qué pantallas tiene y cómo se pasa de una a otra.
+
+menu_main.xml
+Es la lista de opciones que aparece en la esquina superior derecha (el menú de la barra).
+
+MainActivity.kt
+Es la clase principal que controla la app cuando se abre. Configura la barra superior, los fragmentos y el botón flotante.
+
+FirstFragment.kt
+Es la lógica del primer fragmento. Aquí se decide qué pasa cuando tocas un botón dentro de esa pantalla.
+
+SecondFragment.kt
+Es la lógica del segundo fragmento. Igual que el anterior, pero para la segunda pantalla.
+
+¿Qué es un Fragmento?
+Una parte de la pantalla que puedes cambiar sin salir de la actividad.
+
+¿Qué es un FloatingActionButton?
+Un botón redondo que flota sobre la pantalla y sirve para una acción importante.
+
+¿Qué es un AppBarLayout?
+Un contenedor que muestra la parte de arriba de la app, como la barra con el título y el menú.
+
